@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: supabase-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: supabase-db
+  template:
+    metadata:
+      labels:
+        app: supabase-db
+    spec:
+      containers:
+      - name: supabase-db-container
+        image: supabase/postgres-meta
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres.ckvwdowrqoqdmifqdlxb
+        - name: POSTGRES_PASSWORD
+          value: azerty123linabalkis
+        volumeMounts:
+        - name: pgdata-volume
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: pgdata-volume
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: supabase-db-service
+spec:
+  selector:
+    app: supabase-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+

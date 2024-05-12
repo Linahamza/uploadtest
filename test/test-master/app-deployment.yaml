@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: laravel-app
+  template:
+    metadata:
+      labels:
+        app: laravel-app
+    spec:
+      containers:
+      - name: laravel-app-container
+        image: my-laravel-app:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_NAME
+          value: Laravel
+        - name: APP_ENV
+          value: local
+        - name: APP_KEY
+          value: "base64:K0IZwDXYcpMG1FUSxMoGDfaojwbGYY3qHp6/b6Llwr0="
+        - name: APP_DEBUG
+          value: "true"
+        - name: APP_URL
+          value: "http://localhost:8000"
+        - name: DATABASE_URL
+          value: "postgres://postgres.ckvwdowrqoqdmifqdlxb:azerty123linabalkis@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+        volumeMounts:
+        - name: app-volume
+          mountPath: /var/www
+      volumes:
+      - name: app-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: laravel-app-service
+spec:
+  selector:
+    app: laravel-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: NodePort
